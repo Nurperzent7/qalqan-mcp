@@ -52,19 +52,25 @@ copy .env.example .env   # и заполнить
 .\start.ps1
 ```
 
-Сервер слушает `http://127.0.0.1:8765`, лог пишется в `logs\server.log`.
-Проверка: <http://127.0.0.1:8765/health>.
+`start.ps1` поднимает сервер на `http://127.0.0.1:3847` и туннель Cloudflare (если в `.env`
+задан `TUNNEL_TOKEN`). Каждый из них перезапускается, если упадёт. Логи лежат в `logs\server.log`
+и `logs\tunnel.log`. Проверка: <http://127.0.0.1:3847/health>.
 
-Чтобы сервер стартовал сам при входе в Windows, запустите `install-autostart.ps1`.
+Чтобы всё стартовало само при входе в Windows, запустите `install-autostart.ps1`.
 Он создаёт задачу планировщика `Qalqan MCP`.
 
 ### 3. Cloudflare Tunnel
 
-1. Cloudflare → **Zero Trust → Networks → Tunnels** → туннель для `mcp.qalqan.org`
-   (или новый) → вкладка установки для Windows → скопировать команду с токеном.
-2. В PowerShell **от администратора**: `cloudflared.exe service install <токен>`.
-3. В туннеле **Public Hostname**: `mcp.qalqan.org` → Service `HTTP` → `localhost:8765`.
+Туннель `qalqan-hub` управляется локально: маршрут `mcp.qalqan.org → http://127.0.0.1:3847`
+задан в [cloudflared.yml](cloudflared.yml), а не в панели Cloudflare.
+
+1. Cloudflare → **Networking → Tunnels → qalqan-hub** → блок «Install cloudflared connector»
+   → скопировать токен из команды `cloudflared.exe service install <токен>`.
+2. Вписать его в `.env`: `TUNNEL_TOKEN=<токен>`.
+3. Перезапустить `start.ps1`. Через полминуты статус туннеля должен стать **Healthy**.
 4. Проверка: `https://mcp.qalqan.org/health` должен вернуть `{"status":"ok"}`.
+
+Права администратора и служба Windows не нужны: cloudflared запускается из `start.ps1`.
 
 ### 4. Подключение в Claude
 
@@ -75,10 +81,10 @@ Claude → **Settings → Connectors → Add custom connector** → URL `https:/
 ## Локальная проверка без авторизации
 
 В `.env` поставить `AUTH_DISABLED=1` (работает только при `HOST=127.0.0.1`), запустить
-`server.py`, подключиться MCP-клиентом к `http://127.0.0.1:8765/mcp`. Не забудьте вернуть `0`.
+`server.py`, подключиться MCP-клиентом к `http://127.0.0.1:3847/mcp`. Не забудьте вернуть `0`.
 
 ## Секреты
 
-`.env` (токен Оксимы, секрет Google, ключ подписи) в git не попадает. Если токен Оксимы
+`.env` (токены Оксимы и туннеля, секрет Google, ключ подписи) в git не попадает. Если токен Оксимы
 утёк, выпустите новый в Оксиме и замените его в `.env`. Если сменить `JWT_SIGNING_KEY`,
 всем сотрудникам придётся войти заново.

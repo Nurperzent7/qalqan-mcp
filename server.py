@@ -28,7 +28,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 PUBLIC_URL = os.environ.get("PUBLIC_URL", "https://mcp.qalqan.org").rstrip("/")
 ALLOWED_DOMAIN = os.environ.get("ALLOWED_DOMAIN", "qalqan.org").lower()
 HOST = os.environ.get("HOST", "127.0.0.1")
-PORT = int(os.environ.get("PORT", "8765"))
+PORT = int(os.environ.get("PORT", "3847"))
 AUTH_DISABLED = os.environ.get("AUTH_DISABLED") == "1"
 
 # Адреса, куда клиенты MCP возвращаются после входа: веб и десктоп Claude, Claude Code.

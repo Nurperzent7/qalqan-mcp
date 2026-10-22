@@ -1,0 +1,6 @@
+# Маршруты туннеля qalqan-hub (он управляется локально, из этого файла).
+# Учётные данные туннеля берутся из переменной TUNNEL_TOKEN (.env).
+ingress:
+  - hostname: mcp.qalqan.org
+    service: http://127.0.0.1:3847
+  - service: http_status:404
