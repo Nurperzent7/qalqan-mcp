@@ -25,7 +25,7 @@ Ubuntu 24.04, две службы systemd: `qalqan-mcp` (сервер) и `qalqa
 Обновить код после изменений в репозитории:
 
 ```bash
-sudo git -C /opt/qalqan-mcp pull && sudo systemctl restart qalqan-mcp
+sudo -u qalqan git -C /opt/qalqan-mcp pull && sudo systemctl restart qalqan-mcp
 ```
 
 Новый сервер с нуля: скопировать `.env` (и при переносе — папку хранилища

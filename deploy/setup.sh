@@ -33,7 +33,8 @@ id qalqan >/dev/null 2>&1 || useradd --system --home "$DATA" --shell /usr/sbin/n
 mkdir -p "$DATA" /etc/qalqan-mcp
 
 if [ -d "$APP/.git" ]; then
-    git -C "$APP" pull -q --ff-only
+    # Репозиторий принадлежит qalqan; git от root отказывается работать в чужой папке.
+    runuser -u qalqan -- git -C "$APP" pull -q --ff-only
 else
     git clone -q "$REPO" "$APP"
 fi
