@@ -4,8 +4,42 @@
 [Оксимы](https://app.oxima.kz): НПА Казахстана и МФЦА, судебные дела с ИИ-аннотациями
 и ИИ-ассистент Оксимы.
 
-Сервер работает на компьютере в офисе и доступен по адресу `https://mcp.qalqan.org/mcp`
-через Cloudflare Tunnel. Войти могут только Google-аккаунты `@qalqan.org`.
+Сервер работает круглосуточно на облачной машине Google Cloud (e2-micro) и доступен
+по адресу `https://mcp.qalqan.org/mcp` через Cloudflare Tunnel. Войти могут только
+Google-аккаунты `@qalqan.org`.
+
+## Облачный сервер
+
+Ubuntu 24.04, две службы systemd: `qalqan-mcp` (сервер) и `qalqan-tunnel` (cloudflared).
+Обе стартуют сами при загрузке и перезапускаются при падении.
+
+| Что | Где |
+|---|---|
+| Код | `/opt/qalqan-mcp` (клон этого репозитория) |
+| Настройки | `/opt/qalqan-mcp/.env`, токен туннеля — `/etc/qalqan-mcp/tunnel.env` |
+| OAuth-токены | `/var/lib/qalqan-mcp/oauth-proxy` |
+| Журналы | `journalctl -u qalqan-mcp`, `journalctl -u qalqan-tunnel` |
+
+Вход по SSH-ключу администратора (адрес — в консоли Google Cloud → VM instances).
+
+Обновить код после изменений в репозитории:
+
+```bash
+sudo git -C /opt/qalqan-mcp pull && sudo systemctl restart qalqan-mcp
+```
+
+Новый сервер с нуля: скопировать `.env` (и при переносе — папку хранилища
+`oauth-proxy/<id>`), затем `sudo bash deploy/setup.sh /tmp/.env [/tmp/<id>]`.
+Пока работает старая копия, ставьте с `NO_START=1`: две копии на одном туннеле
+делят запросы, а токены у каждой свои.
+
+Расходы: машина и диск входят в Free Tier, внешний IPv4 ≈ 3,65 $/мес. Бюджет
+«qalqan-mcp 5 USD» шлёт письмо администратору на 50/90/100 %.
+
+## Запуск на Windows (запасной вариант)
+
+Ниже — запуск на обычном компьютере. Задача автозапуска `Qalqan MCP` на ноутбуке
+отключена после переезда в облако; не включайте её, пока работает облачный сервер.
 
 ## Инструменты
 

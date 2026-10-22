@@ -49,6 +49,16 @@ chmod 600 /etc/qalqan-mcp/tunnel.env
 if [ -n "$OAUTH_DIR" ]; then
     mkdir -p "$DATA/oauth-proxy"
     cp -a "$OAUTH_DIR" "$DATA/oauth-proxy/"
+    # Хранилище помнит абсолютный путь каждой коллекции (с Windows это C:\...),
+    # а FastMCP отвергает пути вне своей папки — переписываем их на новые.
+    python3 - "$DATA/oauth-proxy/$(basename "$OAUTH_DIR")" <<'EOF'
+import json, pathlib, sys
+root = pathlib.Path(sys.argv[1])
+for info in root.glob("*-info.json"):
+    data = json.loads(info.read_text())
+    data["directory"] = str(root / info.name[: -len("-info.json")])
+    info.write_text(json.dumps(data))
+EOF
 fi
 
 chown -R qalqan:qalqan "$APP" "$DATA" /etc/qalqan-mcp
