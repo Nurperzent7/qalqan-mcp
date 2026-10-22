@@ -30,6 +30,8 @@ ALLOWED_DOMAIN = os.environ.get("ALLOWED_DOMAIN", "qalqan.org").lower()
 HOST = os.environ.get("HOST", "127.0.0.1")
 PORT = int(os.environ.get("PORT", "3847"))
 AUTH_DISABLED = os.environ.get("AUTH_DISABLED") == "1"
+# Коннектор Qalqan Platform в каталоге Claude зарегистрирован на https://mcp.qalqan.org — MCP в корне.
+MCP_PATH = os.environ.get("MCP_PATH", "/")
 
 # Адреса, куда клиенты MCP возвращаются после входа: веб и десктоп Claude, Claude Code.
 CLIENT_REDIRECTS = [
@@ -387,4 +389,4 @@ async def ask_oxima_ai(
 
 if __name__ == "__main__":
     allowed_hosts = [HOST, "localhost", "127.0.0.1", PUBLIC_URL.split("://", 1)[-1]]
-    mcp.run(transport="http", host=HOST, port=PORT, path="/mcp", allowed_hosts=allowed_hosts)
+    mcp.run(transport="http", host=HOST, port=PORT, path=MCP_PATH, allowed_hosts=allowed_hosts)

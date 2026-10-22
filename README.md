@@ -4,7 +4,7 @@
 [Оксимы](https://app.oxima.kz): НПА Казахстана и МФЦА, судебные дела с ИИ-аннотациями
 и ИИ-ассистент Оксимы.
 
-Сервер работает на компьютере в офисе и доступен по адресу `https://mcp.qalqan.org/mcp`
+Сервер работает на компьютере в офисе и доступен по адресу `https://mcp.qalqan.org`
 через Cloudflare Tunnel. Войти могут только Google-аккаунты `@qalqan.org`.
 
 ## Инструменты
@@ -74,14 +74,14 @@ copy .env.example .env   # и заполнить
 
 ### 4. Подключение в Claude
 
-Claude → **Settings → Connectors → Add custom connector** → URL `https://mcp.qalqan.org/mcp`.
+Claude → **Settings → Connectors → Add custom connector** → URL `https://mcp.qalqan.org`.
 Если в организации коннектор Qalqan Platform уже есть, исправьте в нём адрес и нажмите **Connect**.
 Откроется вход Google: выберите рабочий аккаунт `@qalqan.org`.
 
 ## Локальная проверка без авторизации
 
 В `.env` поставить `AUTH_DISABLED=1` (работает только при `HOST=127.0.0.1`), запустить
-`server.py`, подключиться MCP-клиентом к `http://127.0.0.1:3847/mcp`. Не забудьте вернуть `0`.
+`server.py`, подключиться MCP-клиентом к `http://127.0.0.1:3847/`. Не забудьте вернуть `0`.
 
 ## Секреты
 
