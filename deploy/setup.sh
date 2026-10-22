@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Устанавливает MCP-сервер Qalqan Platform и туннель на Ubuntu 24.04.
 # Запуск: sudo bash setup.sh /path/to/.env [/path/to/oauth-storage-dir]
+# NO_START=1 — только установить, службы не запускать (пока работает старая копия).
 # Повторный запуск безопасен: обновляет код и перезапускает службы.
 set -euo pipefail
 
@@ -9,6 +10,12 @@ OAUTH_DIR=${2:-}
 APP=/opt/qalqan-mcp
 DATA=/var/lib/qalqan-mcp
 REPO=https://github.com/Nurperzent7/qalqan-mcp.git
+
+# У e2-micro всего 1 ГБ памяти; подкачка страхует pip и сервер.
+if [ ! -f /swapfile ]; then
+    fallocate -l 1G /swapfile && chmod 600 /swapfile && mkswap -q /swapfile && swapon /swapfile
+    echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
 
 apt-get update -qq
 apt-get install -y -qq python3-venv git curl ca-certificates
@@ -49,7 +56,11 @@ chown -R qalqan:qalqan "$APP" "$DATA" /etc/qalqan-mcp
 install -m 644 "$APP/deploy/qalqan-mcp.service" /etc/systemd/system/
 install -m 644 "$APP/deploy/qalqan-tunnel.service" /etc/systemd/system/
 systemctl daemon-reload
-systemctl enable --now qalqan-mcp qalqan-tunnel
+systemctl enable qalqan-mcp qalqan-tunnel
+if [ "${NO_START:-0}" = 1 ]; then
+    echo "Установлено; службы не запущены (NO_START=1)."
+    exit 0
+fi
 systemctl restart qalqan-mcp qalqan-tunnel
 
 sleep 5
