@@ -1,0 +1,15 @@
+[Unit]
+Description=Cloudflare tunnel qalqan-hub for mcp.qalqan.org
+After=network-online.target qalqan-mcp.service
+Wants=network-online.target
+
+[Service]
+User=qalqan
+# Только TUNNEL_TOKEN; setup.sh выносит его сюда из .env.
+EnvironmentFile=/etc/qalqan-mcp/tunnel.env
+ExecStart=/usr/bin/cloudflared tunnel --no-autoupdate --config /opt/qalqan-mcp/cloudflared.yml run
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
