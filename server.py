@@ -30,8 +30,8 @@ ALLOWED_DOMAIN = os.environ.get("ALLOWED_DOMAIN", "qalqan.org").lower()
 HOST = os.environ.get("HOST", "127.0.0.1")
 PORT = int(os.environ.get("PORT", "3847"))
 AUTH_DISABLED = os.environ.get("AUTH_DISABLED") == "1"
-# Коннектор Qalqan Platform в каталоге Claude зарегистрирован на https://mcp.qalqan.org — MCP в корне.
-MCP_PATH = os.environ.get("MCP_PATH", "/")
+# Коннектор Qalqan Platform в Claude обращается к https://mcp.qalqan.org/mcp.
+MCP_PATH = os.environ.get("MCP_PATH", "/mcp")
 
 # Адреса, куда клиенты MCP возвращаются после входа: веб и десктоп Claude, Claude Code.
 CLIENT_REDIRECTS = [
